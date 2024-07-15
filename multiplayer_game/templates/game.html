@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game</title>
+    <style>
+        .game{background:#fff;
+        size:20px;}
+    </style>
+</head>
+<body>
+    <h2 align="center">Game Room</h2>
+    <div id="game"></div>
+    <script>
+        const roomName = "{{ room_name }}";
+        const gameSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/game/' + roomName + '/'
+        );
+
+        gameSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            document.querySelector('#game').innerText = data.message;
+        };
+
+        gameSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#game').onclick = function() {
+            gameSocket.send(JSON.stringify({
+                'message': 'Player action'
+            }));
+        };
+    </script>
+</body>
+</html>
